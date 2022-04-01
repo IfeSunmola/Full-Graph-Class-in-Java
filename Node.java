@@ -6,12 +6,13 @@ import java.util.ArrayList;
  * This class represents a Node in a graph. A Node contains the data stored
  * in the graph. It  can also be called Vertex
  */
-public class Node {
+public class Node implements Comparable<Node> {
     private final char name; // char because a letter would represent a Node; final because it shouldn't chane
     private final ArrayList<Edge> edges; // stores all the edges that are connected to this node
     // the edges can be used to find the neighbours
     private boolean visited; // if this Node has been visited during traversals
     private Node previous; // previous Node that led to "this" Node
+    private Integer distance; //used in the shortest path computation in Graph.java
 
     /**
      * Constructor to initialize the instance variable
@@ -21,6 +22,8 @@ public class Node {
     public Node(char name) {
         this.name = name;
         edges = new ArrayList<>();
+        distance = Integer.MAX_VALUE; // starting at MAX_VALUE because so it can be updated when there's a new distance
+        // if this Node has MAX_VALUE, it means a path hasn't been found
     }
 
     /**
@@ -78,6 +81,36 @@ public class Node {
     }
 
     /**
+     * getter method for previous
+     */
+    public Node getPrevious() {
+        return previous;
+    }
+
+    /**
+     * setter method for previous
+     *
+     * @param newPrevious the newPrevious Node
+     */
+    public void setPrevious(Node newPrevious) {
+        previous = newPrevious;
+    }
+
+    /**
+     * getter method for distance
+     */
+    public Integer getDistance() {
+        return distance;
+    }
+
+    /**
+     * setter method for distance
+     */
+    public void setDistance(Integer distance) {
+        this.distance = distance;
+    }
+
+    /**
      * @return A string representation of the class -> The name of the Node
      */
     @Override
@@ -85,4 +118,8 @@ public class Node {
         return "" + name;
     }
 
+    @Override
+    public int compareTo(Node other) {
+        return Integer.compare(this.distance, other.distance);
+    }
 }
