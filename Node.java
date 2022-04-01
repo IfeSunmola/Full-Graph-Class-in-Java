@@ -34,7 +34,6 @@ public class Node {
         edges.add(edge);
     }
 
-
     /**
      * getter method for edges
      *
@@ -61,10 +60,29 @@ public class Node {
     }
 
     /**
+     * getter method for visted
+     *
+     * @return returns visited
+     */
+    public boolean visited() {
+        return visited;
+    }
+
+    /**
+     * Setter method for visited
+     *
+     * @param flag new visited state
+     */
+    public void setVisited(boolean flag) {
+        this.visited = flag;
+    }
+
+    /**
      * @return A string representation of the class -> The name of the Node
      */
     @Override
     public String toString() {
         return "" + name;
     }
+
 }

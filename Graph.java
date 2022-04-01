@@ -1,5 +1,7 @@
 package Graphs;
 
+import Graphs.QueueClass.Queue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,14 +38,14 @@ public class Graph {
      * @param fileName location of the file
      */
     public Graph(String fileName) {
-        nodes = new ArrayList<> ();
+        nodes = new ArrayList<>();
         for (int i = 65; i < 91; i++) { // add A to Z as Nodes
-            nodes.add (new Node ((char) i));
+            nodes.add(new Node((char) i));
         }
         try {
-            createGraphFromAdjMatrix (fileName);
+            createGraphFromAdjMatrix(fileName);
         } catch (IOException ioe) {
-            ioe.printStackTrace ();
+            ioe.printStackTrace();
         }
     }
 
@@ -55,28 +57,28 @@ public class Graph {
      * @throws IOException throws IOException if the file could not be opened
      */
     private void createGraphFromAdjMatrix(String fileName) throws IOException {// create a graph from an adjacency matrix
-        Scanner sc = new Scanner (new File (fileName));
+        Scanner sc = new Scanner(new File(fileName));
         String line;
         int currentRow = 0;// represents Node A, ,B, C, etc
-        while (sc.hasNextLine ()) { // while there's still a line to read
-            line = sc.nextLine (); //store the line for processing
+        while (sc.hasNextLine()) { // while there's still a line to read
+            line = sc.nextLine(); //store the line for processing
 
             //recall: each line contains the weights of the edges
-            String[] rowWeights = line.split (", ");
+            String[] rowWeights = line.split(", ");
             // get the corresponding node name, i.e letter. E.g. currentRow of 1 returns Node A. 10 returns Node J
-            Node startNode = nodes.get (currentRow);
+            Node startNode = nodes.get(currentRow);
 
             // for each rowWeight:
             for (int i = 0; i < rowWeights.length; i++) {
-                int weight = Integer.parseInt (rowWeights[i]);// convert the weight to int
+                int weight = Integer.parseInt(rowWeights[i]);// convert the weight to int
                 if (weight != 0) {// if the weight is not 0, there's a connection,
-                    Node endNode = nodes.get (i); // get the node
-                    startNode.addEdge (new Edge (weight, endNode)); // and make it an edge of startNode
+                    Node endNode = nodes.get(i); // get the node
+                    startNode.addEdge(new Edge(weight, endNode)); // and make it an edge of startNode
                 }
             }
             currentRow++; // repeat
         }
-        sc.close ();
+        sc.close();
     }
 
     /**
@@ -85,22 +87,56 @@ public class Graph {
      * @return String
      */
     public String toString() {
-        StringBuilder result = new StringBuilder ();
+        StringBuilder result = new StringBuilder();
         for (Node curr_node : nodes) { // for each node:
-            if (curr_node.hasEdges ()) {// if the curr_node has edges
-                ArrayList<Edge> nodeNeighbours = curr_node.getEdges ();// store the edges so they can be processed
-                result.append (curr_node).append (" ---> ");// neighbours of curr_node will be added below
+            if (curr_node.hasEdges()) {// if the curr_node has edges
+                ArrayList<Edge> nodeNeighbours = curr_node.getEdges();// store the edges so they can be processed
+                result.append(curr_node).append(" ---> ");// neighbours of curr_node will be added below
 
                 // the start Node of each edge below is curr_node.
                 // the end Node of each edge below is a neighbour of curr_node
                 for (Edge edge : nodeNeighbours) { // for each edge that is connected to curr_node
-                    result.append (edge.getEndNode ());// add the neighbour
+                    result.append(edge.getEndNode());// add the neighbour
                     // and the weight in brackets:
-                    result.append (" (").append (edge.getWeight ()).append (") ");
+                    result.append(" (").append(edge.getWeight()).append(") ");
                 }
-                result.append ("\n");
+                result.append("\n");
             }
         }
-        return result.toString ();
+        return result.toString();
+    }
+
+    /**
+     * public method to do a BFS traversal and print the order in which the nodes are visited. An helper
+     * method is used to achieve this
+     *
+     * @return
+     */
+    public String doBfs() {
+        Queue<Node> q = new Queue<>();
+        StringBuilder result = new StringBuilder("Breadth-first traversal:\n");
+        return bfs_helper(nodes.get(0), q, result);
+    }
+
+    private String bfs_helper(Node start, Queue<Node> q, StringBuilder result) {
+        q.enqueue(start);
+        start.setVisited(true);
+
+        if (q.isEmpty()) {
+            return result.toString();
+        }
+        while (!q.isEmpty()) {
+            Node curr = q.dequeue();
+            result.append(curr).append(" ");
+
+            ArrayList<Edge> adjacents = curr.getEdges();
+            for (Edge adjacentEdge : adjacents) {
+                if (!adjacentEdge.getEndNode().visited()) {
+                    q.enqueue(adjacentEdge.getEndNode());
+                    adjacentEdge.getEndNode().setVisited(true);
+                }
+            }
+        }
+        return result.toString();
     }
 }
