@@ -9,6 +9,6 @@
 </ul>
 
 <h3>Sample main method:</h3>
-![sample main method](sample_main.png)
+<img src="sample_main.png" alt="sample main method" />
 <h3>Output:</h3>
-![sample output](sample_output.png)
+<img src="sample_output.png" alt="sample output" />
