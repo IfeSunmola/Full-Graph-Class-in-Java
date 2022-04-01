@@ -107,7 +107,7 @@ public class Graph {
                 result.append("\n");
             }
         }
-        return result.toString();
+        return result.toString().strip();
     }
 
     /**
