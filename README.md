@@ -1,1 +1,1 @@
-<h2>Graph ADT written in Java</h2>
+<h2>Graph ADT implemented in Java</h2>
