@@ -7,8 +7,8 @@ import java.util.ArrayList;
  * in the graph. It  can also be called Vertex
  */
 public class Node {
-    private char name; // char because a letter would represent a Node
-    private ArrayList<Edge> edges; // stores all the edges that are connected to this node
+    private final char name; // char because a letter would represent a Node; final because it shouldn't chane
+    private final ArrayList<Edge> edges; // stores all the edges that are connected to this node
     // the edges can be used to find the neighbours
     private boolean visited; // if this Node has been visited during traversals
     private Node previous; // previous Node that led to "this" Node
