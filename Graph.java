@@ -1,6 +1,6 @@
 package Graphs;
 
-import Graphs.QueueClass.Queue;
+import Graphs.QueueAndStack.Queue;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,13 +118,13 @@ public class Graph {
      * @param startIndex the index of the Node to start the traversal from.
      * @return a String containing the order in which the nodes were visited
      */
-    public String doBfs(int startIndex) {
+    public String breadthFirstTraversal(int startIndex) {
         Queue<Node> q = new Queue<>();
         Node start = nodes.get(startIndex);
         start.setVisited(true);
         q.enqueue(start);// add it to the queue to begin recursion
         StringBuilder result = new StringBuilder("Breadth-first traversal starting from " + start + ":\n");
-        return doBfsRec(q, result);
+        return bfsRec(q, result);
     }
 
     /**
@@ -134,7 +134,7 @@ public class Graph {
      * @param result the result string
      * @return String containing the order in which the nodes where visited
      */
-    private String doBfsRec(Queue<Node> q, StringBuilder result) {
+    private String bfsRec(Queue<Node> q, StringBuilder result) {
         if (q.isEmpty()) { // base case, empty queue, all nodes have been visited, return current result
             return result.toString();
         }
@@ -151,7 +151,7 @@ public class Graph {
                 adjacentEdge.getEndNode().setVisited(true); // it has been visited
             }
         }
-        result = new StringBuilder(doBfsRec(q, result)); // repeat
+        result = new StringBuilder(bfsRec(q, result)); // repeat
         return result.toString();
     }
 
@@ -160,5 +160,48 @@ public class Graph {
      **/
     public int size() {
         return actualSize;
+    }
+
+    /**
+     * public method to do a Depth first search traversal recursively and print the order in which the nodes are visited. A helper
+     * method is used to achieve this
+     *
+     * @param startIndex the index of the Node to start the traversal from.
+     * @return a String containing the order in which the nodes were visited
+     */
+    public String depthFirstTraversal(int startIndex) {
+        Node start = nodes.get(startIndex);
+        StringBuilder result = new StringBuilder("Depeth-first traversal starting from " + start + ":\n");
+        result = new StringBuilder(dfsRec(start, result));
+        return result.toString();
+    }
+
+    /**
+     * Recursive helper method to do a Depth first traversal of the Graph, using the runtime stack
+     *
+     * @param curr   the node the depth first search from
+     * @param result the result string
+     * @return String containing the order in which the nodes where visited
+     */
+    private String dfsRec(Node curr, StringBuilder result) {
+        if (!curr.visited()) {// current node has not been visited
+            curr.setVisited(true);//visit it
+            result.append(curr).append(" ");// add the value to the string
+            ArrayList<Edge> adjEdges = curr.getEdges();// get its adjacent edges
+            for (Edge edge : adjEdges) {// and for each adjacent edge
+                result = new StringBuilder(dfsRec(edge.getEndNode(), result));// repeat the method
+            }
+        }
+        return result.toString();
+    }
+
+    /**
+     * method to set the visited instance of all the nodes in this graph to false, so a new traversal can
+     * be done
+     */
+    public void reset() {
+        for (Node node : nodes) {
+            node.setVisited(false);
+        }
     }
 }

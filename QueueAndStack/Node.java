@@ -1,4 +1,4 @@
-package Graphs.QueueClass;
+package Graphs.QueueAndStack;
 
 /**
  * Queue class behind a linked list implementation.<br>
