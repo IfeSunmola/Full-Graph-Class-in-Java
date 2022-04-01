@@ -29,6 +29,8 @@ import java.util.Scanner;
  */
 public class Graph {
     private final ArrayList<Node> nodes; // list of all the nodes in this graph
+    private int actualSize; // actual amount of nodes in the graph. The ArrayList above will have letters A - Z
+    // but not all of them will be used
 
     /**
      * <p> Constructor to fill the nodes ArrayList with letters A to Z or fill with the node names you want in your graph
@@ -39,6 +41,7 @@ public class Graph {
      */
     public Graph(String fileName) {
         nodes = new ArrayList<>();
+        actualSize = 0;
         for (int i = 65; i < 91; i++) { // add A to Z as Nodes
             nodes.add(new Node((char) i));
         }
@@ -74,10 +77,12 @@ public class Graph {
                 if (weight != 0) {// if the weight is not 0, there's a connection,
                     Node endNode = nodes.get(i); // get the node
                     startNode.addEdge(new Edge(weight, endNode)); // and make it an edge of startNode
+
                 }
             }
             currentRow++; // repeat
         }
+        actualSize = currentRow;// the amount of rows in the .txt file is the amount of Nodes that was added
         sc.close();
     }
 
@@ -107,36 +112,53 @@ public class Graph {
     }
 
     /**
-     * public method to do a BFS traversal and print the order in which the nodes are visited. An helper
+     * public method to do a BFS traversal recursively and print the order in which the nodes are visited. A helper
      * method is used to achieve this
      *
-     * @return
+     * @param startIndex the index of the Node to start the traversal from.
+     * @return a String containing the order in which the nodes were visited
      */
-    public String doBfs() {
+    public String doBfs(int startIndex) {
         Queue<Node> q = new Queue<>();
-        StringBuilder result = new StringBuilder("Breadth-first traversal:\n");
-        return bfs_helper(nodes.get(0), q, result);
+        Node start = nodes.get(startIndex);
+        start.setVisited(true);
+        q.enqueue(start);// add it to the queue to begin recursion
+        StringBuilder result = new StringBuilder("Breadth-first traversal starting from " + start + ":\n");
+        return doBfsRec(q, result);
     }
 
-    private String bfs_helper(Node start, Queue<Node> q, StringBuilder result) {
-        q.enqueue(start);
-        start.setVisited(true);
-
-        if (q.isEmpty()) {
+    /**
+     * Recursive helper method to do a breadth first traversal of the Graph
+     *
+     * @param q      the queue holding the adjacent nodes of "curr"
+     * @param result the result string
+     * @return String containing the order in which the nodes where visited
+     */
+    private String doBfsRec(Queue<Node> q, StringBuilder result) {
+        if (q.isEmpty()) { // base case, empty queue, all nodes have been visited, return current result
             return result.toString();
         }
-        while (!q.isEmpty()) {
-            Node curr = q.dequeue();
-            result.append(curr).append(" ");
 
-            ArrayList<Edge> adjacents = curr.getEdges();
-            for (Edge adjacentEdge : adjacents) {
-                if (!adjacentEdge.getEndNode().visited()) {
-                    q.enqueue(adjacentEdge.getEndNode());
-                    adjacentEdge.getEndNode().setVisited(true);
-                }
+        Node curr = q.dequeue();
+        result.append(curr).append(" ");
+
+        ArrayList<Edge> adjacents = curr.getEdges(); // get all adjacent edges
+        for (Edge adjacentEdge : adjacents) {// for each adjacent edge
+            // recall that the endNode of an edge is a node that is connected to curr
+            // getEndNode returns a node that is connected to curr
+            if (!adjacentEdge.getEndNode().visited()) { // if it was not visited
+                q.enqueue(adjacentEdge.getEndNode());// enqueue it so it can be added to the string on the next recursive call
+                adjacentEdge.getEndNode().setVisited(true); // it has been visited
             }
         }
+        result = new StringBuilder(doBfsRec(q, result)); // repeat
         return result.toString();
+    }
+
+    /**
+     * Only using this in main to generate a random number to start the BFS at
+     **/
+    public int size() {
+        return actualSize;
     }
 }
